@@ -1,6 +1,6 @@
 log("hi");
 
-let world = createTiles(16, 0, 50);
+let world = createTiles(32, 80, 40);
 
 let blocks = world.createGroup("blocks");
 blocks.spriteSheet = loadImage(QuintOS.dir + "/img/blocks.png");
