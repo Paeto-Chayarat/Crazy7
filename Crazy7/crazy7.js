@@ -1,20 +1,9 @@
-// for (let i = 0; i < 5; i++) {
-// 	blocks.createSprite("block-" + i, 0, i);
-// }
+let schedule, playerDropped, dropTime, dropDelay, nextBlock, dropBlock;
+let score, startTime, isGameOver, levelDelayTime;
 
-let schedule = [0, 0];
-
-blocks.createSprite("block-0", 0, 2);
-
-let playerDropped = false;
-
-let levelDelayTime = 2000;
-
-let dropTime = 0;
-let dropDelay = levelDelayTime;
-
-let dropBlock = blocks[0];
-dropBlock.num = 0;
+let keyHeld = {
+	ArrowDown: 0,
+};
 
 let board = [];
 
@@ -24,7 +13,32 @@ for (let row = 0; row < 11; row++) {
 		board[row].push(" ");
 	}
 }
-logBoard();
+
+// start of game
+function startGame() {
+	logBoard();
+	score = 0;
+
+	text("up next: ", 4, 18);
+	text("score: ", 10, 18);
+	text(score + "     ", 12, 18);
+
+	schedule = [0, 0];
+	blocks.createSprite("block-0", 0, 2);
+	dropBlock = blocks[0];
+	dropBlock.num = 0;
+	nextBlock = blocks.createSprite("block-0", 1, 7);
+
+	dropTime = 0;
+	levelDelayTime = 1000;
+	dropDelay = levelDelayTime;
+	playerDropped = false;
+
+	startTime = Date.now();
+	isGameOver = false;
+	gameCycle();
+}
+startGame();
 
 function logBoard() {
 	let str = "";
@@ -51,13 +65,24 @@ async function gameCycle() {
 	} else {
 		playerDropped = false;
 	}
-	gameCycle();
+	let playTime = Date.now() - startTime;
+	if (playTime > 5000) {
+		if (levelDelayTime > 750) {
+			levelDelayTime /= 1.3;
+		} else if (levelDelayTime > 500) {
+			levelDelayTime /= 1.2;
+		} else if (levelDelayTime > 250) {
+			levelDelayTime /= 1.05;
+		} else if (levelDelayTime > 150) {
+			levelDelayTime /= 1.001;
+		}
+		startTime = Date.now();
+		log(levelDelayTime);
+	}
+	if (isGameOver == false) {
+		gameCycle();
+	}
 }
-gameCycle();
-
-let keyHeld = {
-	ArrowDown: 0,
-};
 
 function dropCheck() {
 	let shouldDrop = dropBlock.row < 10;
@@ -86,6 +111,13 @@ function dropCheck() {
 					board[row][dropBlock.col] = " ";
 				}
 			}
+			score += sum;
+			text(score, 12, 18);
+		} else if (dropBlock.row == 0) {
+			log("game over");
+			isGameOver = true;
+			gameOver();
+			return false;
 		}
 
 		// make new dropBlock
@@ -96,11 +128,14 @@ function dropCheck() {
 
 		// show next block
 		schedule.push(Math.floor(Math.random() * 8));
+		num = schedule[schedule.length - 1];
+		nextBlock = blocks.createSprite("block-" + num, 1, 7);
 	}
 	return shouldDrop;
 }
 
 function playerDrop() {
+	if (isGameOver) return;
 	playerDropped = true;
 	if (!dropCheck()) return;
 	dropBlock.row++;
@@ -111,6 +146,17 @@ function playerDrop() {
 
 function draw() {
 	background(0);
+
+	for (let row = 0; row < 11; row++) {
+		for (let col = 0; col < 5; col++) {
+			if ((col + row) % 2 == 0) {
+				fill(150);
+			} else {
+				fill(200);
+			}
+			rect(10 + 32 * col, 40 + 32 * row, 32, 32);
+		}
+	}
 
 	if (isKeyDown("ArrowDown")) {
 		keyHeld.ArrowDown++;
@@ -126,6 +172,7 @@ function draw() {
 }
 
 function keyPressed() {
+	if (isGameOver) return;
 	if (
 		key == "ArrowLeft" &&
 		dropBlock.col > 0 &&
@@ -141,4 +188,20 @@ function keyPressed() {
 	} else if (key == "ArrowDown") {
 		playerDrop();
 	}
+}
+
+async function gameOver() {
+	await alert("Game Over", 14, 18, 10);
+	for (let row = 0; row < 11; row++) {
+		for (let col = 0; col < 5; col++) {
+			if (board[row][col] !== " ") {
+				board[row][col].remove();
+				board[row][col] = " ";
+			}
+		}
+	}
+	nextBlock.remove();
+	blocks.removeSprites();
+
+	startGame();
 }
