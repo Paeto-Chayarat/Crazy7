@@ -1,7 +1,7 @@
+QuintOS.user = "Paeto-Chayarat";
 QuintOS.dir = "."; // . means the same directory as the QuintOS.html file
-QuintOS.gameTitle = "Crazy7";
+QuintOS.game = "Crazy7";
 QuintOS.sys = "arcv";
-QuintOS.username = "Paeto-Chayarat";
 QuintOS.preload = true;
 
 [
