@@ -1,10 +1,10 @@
-log("hi");
+let world = new World(0, 0, 32);
+world.offset.x = 10;
+world.offset.y = 40;
 
-let world = createTiles(32, 10, 40);
-
-let blocks = world.createGroup("blocks");
-blocks.spriteSheet = loadImage(QuintOS.dir + "/img/blocks.png");
+let blocks = new Group();
+blocks.spriteSheet = loadImage(QuintOS.dir + '/img/blocks.png');
 
 for (let i = 0; i < 8; i++) {
-	blocks.loadAni("block-" + i, { pos: [0, i] });
+	blocks.addAni('block-' + i, { pos: [0, i] });
 }
