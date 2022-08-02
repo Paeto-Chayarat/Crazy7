@@ -1,10 +1,12 @@
-let world = new World(0, 0, 32);
-world.offset.x = 10;
-world.offset.y = 40;
+async function setup() {
+	world = new World(0, 0, 32);
+	world.offset.x = 10;
+	world.offset.y = 40;
 
-let blocks = new Group();
-blocks.spriteSheet = loadImage(QuintOS.dir + '/img/blocks.png');
+	blocks = new Group();
+	blocks.spriteSheet = await loadImage(QuintOS.dir + '/img/blocks.png');
 
-for (let i = 0; i < 8; i++) {
-	blocks.addAni('block-' + i, { pos: [0, i] });
+	for (let i = 0; i < 8; i++) {
+		blocks.addAni('block-' + i, { pos: [i, 0] });
+	}
 }
