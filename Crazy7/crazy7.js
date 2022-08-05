@@ -14,8 +14,20 @@ for (let row = 0; row < 11; row++) {
 	}
 }
 
-// start of game
-function startGame() {
+function preload() {
+	world = new World(0, 0, 32);
+	world.offset.x = 10;
+	world.offset.y = 40;
+
+	blocks = new Group();
+	blocks.spriteSheet = loadImage(QuintOS.dir + '/img/blocks.png');
+
+	for (let i = 0; i < 8; i++) {
+		blocks.addAni('block-' + i, { pos: [i, 0] });
+	}
+}
+
+function start() {
 	logBoard();
 	score = 0;
 
@@ -38,7 +50,6 @@ function startGame() {
 	isGameOver = false;
 	gameCycle();
 }
-startGame();
 
 function logBoard() {
 	let str = '';
@@ -194,5 +205,5 @@ async function gameOver() {
 	nextBlock.remove();
 	blocks.removeSprites();
 
-	startGame();
+	start();
 }
